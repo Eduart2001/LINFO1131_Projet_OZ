@@ -14,8 +14,12 @@ else
 endif
 # TODO: Change these parameters as you wish
 
+AGENT1 = "PacmOz000name.oz"
+AGENT2 = "GhOzt000name.oz"
 all:
 	$(OZC) -c Input.oz -o "Input.ozf"
+	$(OZC) -c ${AGENT2} -o "GhOzt000basic.ozf"
+	$(OZC) -c ${AGENT1} -o "PacmOz000basic.ozf"
 	$(OZC) -c AgentManager.oz
 	$(OZC) -c Graphics.oz
 	$(OZC) -c Main.oz

@@ -6,6 +6,7 @@ import
     Graphics
     AgentManager
     Application
+    OS
 define
      % Check the Adjoin and AdjoinAt function, documentation: (http://mozart2.org/mozart-v1/doc-1.4.0/base/record.html#section.records.records)
 
@@ -29,6 +30,16 @@ define
             {Broadcast State.tracker pacgumSpawned(X Y)}
             {GameController {AdjoinAt State 'items' NewItems}}
         end
+
+        % function to handle the movedTo message
+
+        % fun {movedTo Id Type X Y}
+
+        % in
+
+        % end
+        
+        %
         % TODO: add other functions to handle the messages here
         %...
         
@@ -66,6 +77,15 @@ define
     proc {Handler Msg | Upcoming Instance}
         {Handler Upcoming {Instance Msg}}
     end
+    % Add bots to their port and also to the GUI
+    fun {DoListBot Bots GameControllerPort Maze GUI}
+        case Bots 
+        of nil then nil
+        [] H|T then ID in 
+            ID={GUI spawnBot(H.1 H.3 H.4 $)} %spawn the bot H and returns its Id
+		    {AgentManager.spawnBot H.2 init(ID GameControllerPort Maze)}|{DoListBot T GameControllerPort Maze GUI}
+        end
+	end
 
     % TODO: Spawn the agents
     proc {StartGame}
@@ -81,6 +101,9 @@ define
             'maze': Maze
             'score': 0
         )}
+
+        Agents = {DoListBot Input.bots Port Maze GUI}
+        {System.show Agents.1}
     in
         % TODO: log the winning team name and the score then use {Application.exit 0}
         {Handler Stream Instance}

@@ -48,6 +48,7 @@ define
         )}
     in
         thread {Handler Stream Instance} end
+        {System.show 'Player ID'#init(Id)}
         Port
     end
 end

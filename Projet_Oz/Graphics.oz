@@ -162,7 +162,7 @@ define
             'ids' 'gameObjects'
             'background'
             'running'
-            'gcPort'
+            'gcPort' 
         
         meth init(GCPort)
             Height = 928
@@ -198,6 +198,7 @@ define
         end
 
         meth isRunning($) @running end
+
 
         meth genId($)
             'ids' := @ids + 1

@@ -8,7 +8,10 @@ define
         bot('pacmoz' 'pacmOz000Basic' 1 1)
         bot('ghozt' 'ghOzt000Basic' 26 27)
     ]
-
+    %PacPows PDF 4.2
+    PacPowDuration=3000
+    PacPowRespawnTime=10000
+   
     Map = [
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
         1 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1
