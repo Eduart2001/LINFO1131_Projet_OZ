@@ -9,7 +9,7 @@ import
     OS
 define
      % Check the Adjoin and AdjoinAt function, documentation: (http://mozart2.org/mozart-v1/doc-1.4.0/base/record.html#section.records.records)
-
+    %liste des joueurs 
     proc {Broadcast Tracker Msg}
         {Record.forAll Tracker proc {$ Tracked} if Tracked.alive then {Send Tracked.port Msg} end end}
     end
@@ -27,6 +27,7 @@ define
             Index = Y * 28 + X
             NewItems = {Adjoin State.items items(Index: gum('alive': true) 'ngum': State.items.ngum + 1)}
         in
+            %steate.tracker liste des jouerus
             {Broadcast State.tracker pacgumSpawned(X Y)}
             {GameController {AdjoinAt State 'items' NewItems}}
         end
@@ -87,6 +88,18 @@ define
         end
 	end
 
+	fun {InitAgents Ports}
+        case Ports
+        of nil then nil
+        [] Port|T then
+                playerState(
+                    alive: true % ?
+                    % TODO: add fields
+                    port: Port
+                    )|{InitAgents T}
+		end
+	end
+
     % TODO: Spawn the agents
     proc {StartGame}
         Stream
@@ -96,14 +109,20 @@ define
         Maze = {Input.genMaze}
         {GUI buildMaze(Maze)}
 
+    
+
+        % init the agents (returns a list the agents' ports)
+        Agents = {DoListBot Input.bots Port Maze GUI}
+
+        % init the state record for all agents
+        AgentsState = {InitAgents Agents} 
+
         Instance = {GameController state(
             'gui': GUI
             'maze': Maze
             'score': 0
+            'tracker': AgentsState
         )}
-
-        Agents = {DoListBot Input.bots Port Maze GUI}
-        {System.show Agents.1}
     in
         % TODO: log the winning team name and the score then use {Application.exit 0}
         {Handler Stream Instance}

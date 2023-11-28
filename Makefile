@@ -23,6 +23,7 @@ all:
 	$(OZC) -c AgentManager.oz
 	$(OZC) -c Graphics.oz
 	$(OZC) -c Main.oz
+	$(OZENGINE) Main.ozf
 run:
 	$(OZENGINE) Main.ozf
 clean:
