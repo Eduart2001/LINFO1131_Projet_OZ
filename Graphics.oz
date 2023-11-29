@@ -2,7 +2,7 @@ functor
 
 import
     OS
-    % System
+    System
     Application
     QTk at 'x-oz://system/wp/QTk.ozf'
 export

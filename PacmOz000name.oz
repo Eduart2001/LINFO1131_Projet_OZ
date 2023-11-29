@@ -15,9 +15,10 @@ define
     % TODO: Complete this concurrent functional agent (PacmOz/GhOzt)
     fun {Agent State}
         fun {MovedTo Msg}
-            RandInt = {GetRandInt 10}
-        in
-            {System.show log(RandInt Msg)}
+            % Msg = movedTo(<id> <type> <x> <y>)
+            % if State.id ==Msg.1  then 
+            %     %{Send State.gcport moveTo(State.id 'south')}
+            % end
             {Agent State}
         end
 
@@ -25,65 +26,65 @@ define
         fun {GotHaunted Msg} 
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State}
         end
     
         fun {GotIncensed Msg}
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State} 
         end
     
         fun {PacGumSpawned Msg}
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State} 
         end
     
         fun {PacGumDispawned Msg}
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State}
         end
     
         fun {PacPowSpawned Msg} 
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State}
         end 
         fun {PacPowDown Msg}
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State}
         end
         fun {TellTeam Msg}
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State}
         end
         fun {Haunt Msg}
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State}
         end
         fun {Shutdown Msg}
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State}
         end
         fun {InvalidAction Msg}
             RandInt = {GetRandInt 10}
         in
-            {System.show log(RandInt Msg)}
+            %{System.show log(RandInt Msg)}
             {Agent State}
         end 
     in
@@ -125,7 +126,6 @@ define
         )}
     in
         thread {Handler Stream Instance} end
-        {System.show 'Player ID'#init(Id)}
         Port
     end
 end
