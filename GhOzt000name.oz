@@ -11,6 +11,7 @@ define
 
     % Helper => returns an integer between [0, N]
     fun {GetRandInt N} {OS.rand} mod N end
+
     fun {MoveTowardsThePacmOz G_X G_Y P_X P_Y State}
         South North West East  ShortestPath 
     in 
@@ -22,7 +23,7 @@ define
     end
     fun{GetMinDir South North West East}
         UpRight DownLeft Result
-        {System.show 'S'#South#'N'#North#'W'#West#'E'#East}
+        %{System.show 'S'#South#'N'#North#'W'#West#'E'#East}
     in 
         if South =< East then UpRight=state(dist:South dir:south) else UpRight=state(dist: East dir:east) end
         if North < West then DownLeft=state(dist:North dir:north) else DownLeft=state(dist: West dir:west) end    
@@ -45,19 +46,22 @@ define
         PrevMove=State.prevMove
     in
         {Wait PrevMove}
-        {System.show prevMove}
+        %{System.show prevMove}
         if PrevMove==InvMove then false 
         else if {List.nth Maze PosMaze} \=1 then true else false  end end
     end
+
     % TODO: Complete this concurrent functional agent (PacmOz/GhOzt)
     fun {Agent State}
         fun {MovedTo Msg}
             Dir
+            PacmozId
         in 
             if State.id == Msg.1  then
                 Dir={MoveTowardsThePacmOz Msg.3 Msg.4 1 1 State}
                 {Wait Dir}
                 {Send State.gcport moveTo(State.id Dir)}
+                {Send State.agentPort haunt(PacmozId State.id)}
                 {Agent {AdjoinAt State 'prevMove' Dir}}
             else 
                 {Agent State}
@@ -107,9 +111,7 @@ define
             {Agent State}
         end
         fun {Haunt Msg}
-            RandInt = {GetRandInt 10}
-        in
-            %{System.show log(RandInt Msg)}
+            {Send State.gcport Msg}
             {Agent State}
         end
         fun {Shutdown Msg}
@@ -160,6 +162,7 @@ define
             'maze': Maze
             'gcport': GCPort
             'prevMove':south
+            'agentPort':Port
         )}
     in
         thread {Handler Stream Instance} end

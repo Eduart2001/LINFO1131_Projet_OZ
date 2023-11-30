@@ -11,6 +11,8 @@ define
 
     % Helper => returns an integer between [0, N]
     fun {GetRandInt N} {OS.rand} mod N end
+
+
     
     % TODO: Complete this concurrent functional agent (PacmOz/GhOzt)
     fun {Agent State}
