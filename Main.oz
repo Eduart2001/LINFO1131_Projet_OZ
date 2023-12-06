@@ -15,7 +15,7 @@ define
     end
     % TODO: define here any auxiliary functions or procedures you may need
     %...
-
+    
 
     %Function to modify agents states based on a function
     fun {AgentStateModification AgentsState WantedID Function}
@@ -46,26 +46,83 @@ define
 
         % function to handle the moveTo message
         fun {MoveTo moveTo(Id Dir)}
-            X Y R 
+            X Y R HasGum CurrentAgent 
+
             fun {ModPos AgentState}
                 agentState(id:Id x:Ax y:Ay type:TYPE port:PORT alive:ALIVE) = AgentState
             in
                 agentState(id:Id x:Ax+X y:Ay+Y type:TYPE port:PORT alive:ALIVE)
             end
+
+            fun {ModGum Item}
+                gum(alive:ALIVE) = Item
+            in
+                gum(alive:false) 
+            end
+
+            CurrentAgent = State.tracker.Id
+            ItemsRecord = State.items
+            UpdatedState 
+
         in
             if Dir==north then X=0 Y=~1 end 
             if Dir==south then X=0 Y=1 end 
             if Dir==east then X=1 Y=0 end
             if Dir==west then X=~1 Y=0 end 
 
+            % verifies if a pacgum is in the pacmoz pos to eliminate it 
+            if CurrentAgent.type == 'pacmoz' then 
+                
+                HasGum = CurrentAgent.x+ CurrentAgent.y*28 % calculates the pacmoz pos 
+                
+                
+
+                if {HasFeature ItemsRecord HasGum}then T in %checks if the pacmoz pos is also a pacgum 
+                    T={Record.subtract ItemsRecord HasGum} % removes the HasGum from the record and returns the new record
+                    UpdatedState={AdjoinAt{AdjoinAt State items {AdjoinAt T ngum  T.ngum-1} } score State.score+100} %updates the state record by adding the new updated items record and also changes the score by adding 100
+                    
+                    {UpdatedState.gui dispawnPacgum(CurrentAgent.x CurrentAgent.y)} % dispawns the pacgum
+
+                    {UpdatedState.gui updateScore(UpdatedState.score)} % updates the score
+                end 
+
+            end 
+
             {State.gui moveBot(Id Dir)}
 
-            R={List.toRecord agentState {List.mapInd {AgentStateModification {Record.toList State.tracker} Id ModPos} fun {$ I A} I#A end}} %Transforms the agents state to List then modifies it and makes it a record again
 
-            {System.show R}
-            {GameController {AdjoinAt State tracker R}}
+            if {IsDet UpdatedState} then % if the UpdateState is bounded  adjoint the tracker to the new UpdatedState at the trcker pos
+                R={List.toRecord agentState {List.mapInd {AgentStateModification {Record.toList UpdatedState.tracker} Id ModPos} fun {$ I A} I#A end}}%Transforms the agents state to List then modifies it and makes it a record again
+                {GameController {AdjoinAt UpdatedState tracker R}}
+            else 
+                R={List.toRecord agentState {List.mapInd {AgentStateModification {Record.toList State.tracker} Id ModPos} fun {$ I A} I#A end}}%Transforms the agents state to List then modifies it and makes it a record again
+                {GameController {AdjoinAt State tracker R}}
+            end
         end
 
+        % function to handle the movedTo message
+        %movedTo(Id Type X Y): The Game Controller broadcasts movedT o(< id >< type >< int >< int > to every agent in the Maze
+        fun {MovedTo movedTo(ID TYPE X Y)}
+            {Broadcast State.tracker movedTo(ID TYPE X Y)}
+            {GameController State}
+        end
+
+        fun {Haunt haunt(PacmozId GhOztId)}
+        %     PacmozId ={CheckPacmOz State.tracker State.tracker.2.x State.tracker.2.y}
+        % in
+        %     {System.show PacmozId}
+        %      if PacmozId \= 0 then
+        %          {Broadcast State.tracker gotHaunted(PacmozId)}
+        %          {State.gui dispawnBot(PacmozId)}
+        %      end
+            
+            {GameController State}
+        end
+
+        fun {Incense incense(PacmozId GhOztId)}
+
+            {GameController State}
+        end
 
         % function to handle the PacGumSpawned message
         fun {PacgumSpawned pacgumSpawned(X Y)}
@@ -77,41 +134,25 @@ define
                 NewItems = items(Index: gum('alive': true) 'ngum': 1)
             end
         in
-            %steate.tracker liste des jouerus
+            %state.tracker liste des jouerus
             {Broadcast State.tracker pacgumSpawned(X Y)}
             {GameController {AdjoinAt State 'items' NewItems}}
         end
 
-        % function to handle the movedTo message
-        %movedTo(Id Type X Y): The Game Controller broadcasts movedT o(< id >< type >< int >< int > to every agent in the Maze
-        fun {MovedTo movedTo(ID TYPE X Y)}
-
-            {Broadcast State.tracker movedTo(ID TYPE X Y)}
-            {GameController State}
-        end
-
-        fun {Haunt haunt(PacmozId GhOztId)}
-            PacmozId ={CheckPacmOz State.tracker State.tracker.2.x State.tracker.2.y}
-        in
-            {System.show PacmozId}
-             if PacmozId \= 0 then
-                 {State.gui dispawnBot(PacmozId)}
-                 %{Broadcast State.tracker gotHaunted(PacmozId)}
-             end
-            
-            {GameController State}
-        end
-        fun {Incense incense(PacmozId GhOztId)}
-
-            {GameController State}
-        end
         fun {PacgumDispawned pacgumDispawned(X Y)}
+            %{System.show 'pacgumDispawned(X Y)'}
+            {Broadcast State.tracker pacgumDispawned(X Y)}
+
             {GameController State}
         end
+       
         fun {PacpowSpawned pacpowSpawned(X Y)}
             {GameController State}
         end
         fun {PacpowDispawned pacpowDispawned(X Y)}
+            % {Broadcast State.tracker pacpowDispawned(X Y)}
+
+            % {State.gui pacpowDispawned(X Y)}
             {GameController State}
         end
         fun {PacpowDown pacpowDown(X Y)}
@@ -148,6 +189,8 @@ define
         in
             if {HasFeature Interface Dispatch} then
                 %{System.show 'interface:'#Interface#' Dispatch:'#Dispatch#'Msg:'#Msg}
+                
+                %%{System.show Msg}
                 {Interface.Dispatch Msg}
             else
                 % {System.show log('Unhandle message' Dispatch)}
@@ -208,6 +251,7 @@ define
         Agents = {DoListBot Input.bots Port Maze GUI}
         % init the state record for all agents
         AgentsState = {List.toRecord agentState {List.mapInd {InitAgents Agents} fun {$ I A} I#A end}}
+
         Instance = {GameController state(
             'gui': GUI
             'maze': Maze

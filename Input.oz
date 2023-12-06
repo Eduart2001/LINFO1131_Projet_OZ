@@ -7,6 +7,10 @@ define
     Bots = [
         bot('pacmoz' 'pacmOz000Basic' 1 1)
         bot('ghozt' 'ghOzt000Basic' 26 27)
+        % bot('pacmoz' 'pacmOz000Basic' 1 2)
+        % bot('ghozt' 'ghOzt000Basic' 26 27)
+        % bot('pacmoz' 'pacmOz000Basic' 1 3)
+        % bot('ghozt' 'ghOzt000Basic' 26 27)
     ]
     %PacPows PDF 4.2
     PacPowDuration=3000
