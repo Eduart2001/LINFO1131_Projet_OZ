@@ -7,15 +7,14 @@ define
     Bots = [
         bot('pacmoz' 'pacmOz000Basic' 1 1)
         bot('ghozt' 'ghOzt000Basic' 26 27)
-        % bot('pacmoz' 'pacmOz000Basic' 1 2)
+        % bot('pacmoz' 'pacmOz000Basic' 1 1)
+        % bot('pacmoz' 'pacmOz000Basic' 1 1)
         % bot('ghozt' 'ghOzt000Basic' 26 27)
-        % bot('pacmoz' 'pacmOz000Basic' 1 3)
+        % bot('pacmoz' 'pacmOz000Basic' 1 1)
+        % bot('ghozt' 'ghOzt000Basic' 26 27)
+        % bot('pacmoz' 'pacmOz000Basic' 1 1)
         % bot('ghozt' 'ghOzt000Basic' 26 27)
     ]
-    %PacPows PDF 4.2
-    PacPowDuration=3000
-    PacPowRespawnTime=10000
-   
     Map = [
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
         1 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1
@@ -47,7 +46,7 @@ define
         1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
     ]
-    
+
     % BONUS TODO: MAZE GENERATOR -> 28x29 tiles
     fun {MazeGenerator} Map end
 end
