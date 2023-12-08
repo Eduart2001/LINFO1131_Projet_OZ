@@ -32,3 +32,5 @@ clean:
 	rm Graphics.ozf
 	rm AgentManager.ozf
 	rm Main.ozf
+	rm PacmOz055Basic.ozf
+	rm GhOzt055Basic.ozf

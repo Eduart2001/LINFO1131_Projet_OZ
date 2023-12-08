@@ -6,7 +6,7 @@ import
 export
     'getPort': SpawnAgent
 define
-
+    Dead %this variable is bound when a message is receved 
     % Feel free to modify it as much as you want to build your own agents :) !
 
     % Helper => returns an integer between [0, N]
@@ -41,44 +41,56 @@ define
                 [] state(valid:V move:M )|T then if V==true then {PossibleDirList T M|L} else {PossibleDirList T L} end
                 end 
             end
-            fun{SameBox Tracker Agent}
-                {Record.forAll Tracker proc {$ Tracked} 
-                    if {And Tracked.type \= Agent.type  {And Tracked.id \= Agent.id {And Agent.x==Tracked.x Agent.y==Tracked.y}}}then 
-                        if State.pow == nil then 
-                            {Send UpdatedState.gcport haunt(Tracked.id Agent.id)}
-                        else
-                            {Send UpdatedState.gcport incense(Agent.id Tracked.id)}
-                        end
-                    end 
-                 end}
-                 1
-            end 
+            fun {SameBox Tracker Agent Agents}
+                    
+                case Tracker of nil then Agents 
+                [] H|T then
+                    if {And H.type \= Agent.type  H.id \= Agent.id} andthen {And Agent.x==H.x Agent.y==H.y} then
+                        case State.pow of nil then
+                            {Send UpdatedState.gcport haunt(H.id Agent.id)}
+                            {SameBox T Agent Agent.id|Agents}
+                        else 
+                            {Send UpdatedState.gcport incense(Agent.id H.id)}
+                            {SameBox T Agent H.id|Agents}
+                        end 
+                    else 
+                        {SameBox T Agent Agents}
+                    end
+                end
+            end
 
+            fun {RemoveFromRecord List Agents}
+                case List of nil then Agents
+                [] H|T then {RemoveFromRecord T {Record.subtract Agents H}}
+                end
+            end 
             CurrentAgent = {ModPos Msg}
             Id=CurrentAgent.id
             UpdatedState = {AdjoinAt State 'agents' {Adjoin State.agents agents(Id:CurrentAgent)}}
-            
+            Samebox
+            UpdatedRecord
         in
-
+            %{System.show UpdatedState.agents}
             %Msg = movedTo(1#<id> 2#<type> 3#<x> 4#<y>)
-            if State.id==CurrentAgent.id  then 
-                {Wait {SameBox UpdatedState.agents CurrentAgent}}
+            if State.id==CurrentAgent.id  then
+                Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
+                {Wait Samebox}
+                UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
+                {Wait UpdatedRecord}
+                
                 L ={PossibleDirList [state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y+1 State north} move:south) state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y-1 State south} move:north) state(valid:{IsValidMove CurrentAgent.x-1 CurrentAgent.y State east} move:west) state(valid:{IsValidMove CurrentAgent.x+1 CurrentAgent.y State west} move:east)]  nil}
                 if L == nil then 
-                    {Agent UpdatedState}
+                    {Agent {AdjoinAt UpdatedState agents UpdatedRecord}}
                 else 
                     
                     RandInt = {GetRandInt {List.length L}}+1  %so we will have a [1;{Length L}]
             
                     Dir={List.nth L RandInt}
-                    
                     {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
-                   
-                    {Agent {AdjoinAt UpdatedState prevMove Dir}}
+                    {Agent {AdjoinAt {AdjoinAt UpdatedState agents UpdatedRecord} prevMove Dir}}
                 end
-                
+ 
             else 
-
                 {Agent UpdatedState}
 
             end
