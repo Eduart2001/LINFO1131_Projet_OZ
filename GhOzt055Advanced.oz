@@ -65,7 +65,6 @@ define
                 {Agent {AdjoinAt State 'prevMove' Dir}}
             else 
                 {Agent State}
-            
             end 
             
     

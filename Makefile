@@ -1,7 +1,7 @@
 # ----------------------------
 # TODO: Fill your group number, your NOMAs and your names
-# group number X
-# NOMA1 : NAME1
+# group number 055
+# 03132100 : ABDULLAHU Eduart
 # NOMA2 : NAME2
 # ----------------------------
 UNAME_S := $(shell uname -s)
@@ -12,19 +12,23 @@ else
 	OZC = ozc
 	OZENGINE = ozengine
 endif
-# TODO: Change these parameters as you wish
 
-AGENT1 = "PacmOz000name.oz"
-AGENT2 = "GhOzt000name.oz"
+
+AGENT1 = "PacmOz055Basic.oz"
+AGENT2 = "GhOzt055Basic.oz"
+
 all:
 	$(OZC) -c Input.oz -o "Input.ozf"
-	$(OZC) -c ${AGENT2} -o "GhOzt000basic.ozf"
-	$(OZC) -c ${AGENT1} -o "PacmOz000basic.ozf"
 	$(OZC) -c AgentManager.oz
 	$(OZC) -c Graphics.oz
+	$(OZC) -c ${AGENT2} -o "GhOzt055Basic.ozf"
+	$(OZC) -c ${AGENT1} -o "PacmOz055Basic.ozf"
 	$(OZC) -c Main.oz
 	$(OZENGINE) Main.ozf
 run:
 	$(OZENGINE) Main.ozf
 clean:
-	rm *.ozf
+	rm Input.ozf
+	rm Graphics.ozf
+	rm AgentManager.ozf
+	rm Main.ozf

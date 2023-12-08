@@ -62,7 +62,6 @@ define
             CurrentAgent = State.tracker.Id
             ItemsRecord = State.items
             UpdatedState 
-
         in
             if Dir==north then X=0 Y=~1 end 
             if Dir==south then X=0 Y=1 end 
@@ -87,7 +86,12 @@ define
                         {UpdatedState.gui dispawnPacgum(CurrentAgent.x CurrentAgent.y)} % dispawns the pacgum
 
                         {UpdatedState.gui updateScore(UpdatedState.score)} % updates the score
-                    
+
+                        if UpdatedState.items.ngum ==0 then 
+                            {System.show 'The PacmOz team won by eliminating the GhOzt team \n The game score is ' # UpdatedState.score}
+                            {Delay 2000}
+                            {Application.exit 0}
+                        end
                     [] pow(alive:_) then   % checks with the pattern match if at HasItem matches gum(alive:_)
                        
                         T={Record.subtract ItemsRecord HasItem}
@@ -99,7 +103,7 @@ define
             end 
             if {IsDet UpdatedState} then % if the UpdateState is bounded  adjoint the tracker to the new UpdatedState at the trcker pos
                 R={List.toRecord agentState {List.mapInd {AgentStateModification {Record.toList UpdatedState.tracker} Id ModPos} fun {$ I A} I#A end}}%Transforms the agents state to List then modifies it and makes it a record again
-                {State.gui moveBot(Id Dir)}
+                {UpdatedState.gui moveBot(Id Dir)}
                 {GameController {AdjoinAt UpdatedState tracker R}}
             else 
                 R={List.toRecord agentState {List.mapInd {AgentStateModification {Record.toList State.tracker} Id ModPos} fun {$ I A} I#A end}}%Transforms the agents state to List then modifies it and makes it a record again
@@ -119,7 +123,9 @@ define
             PacmOz= State.tracker.PacmOzId
 
             UpdatedState
+
         in
+            
             if {And State.tracker.GhOztId.alive {And PacmOz.alive State.pow==nil}} then R = agentState(
                 alive: false 
                 id:PacmOz.id
@@ -143,7 +149,6 @@ define
             
             end 
 
-
             if {IsDet UpdatedState}then 
                 {GameController UpdatedState}
             else 
@@ -154,7 +159,9 @@ define
         fun {Incense incense(PacmOzId GhOztId)}
             GhOzt= State.tracker.GhOztId
             UpdatedState
+
         in
+            
             if {And State.tracker.PacmOzId.alive {And GhOzt.alive State.pow\=nil}} then R = agentState(
                 alive: false 
                 id:GhOzt.id
@@ -175,10 +182,8 @@ define
                     {Delay 2000}
                     {Application.exit 0}
                 end 
-
             end
-
-
+   
             if {IsDet UpdatedState} then 
                 {GameController UpdatedState}
             else
@@ -228,7 +233,6 @@ define
         end
 
         fun {PacpowDown pacpowDown()}
-            {System.show State.pow}
             case State.pow of H|T andthen T==nil then
                 {State.gui setAllScared(false)}
                 {Broadcast State.tracker pacpowDown()}
