@@ -5,26 +5,26 @@ export
     'bots': Bots
 define
     Bots = [
-        bot('ghozt' 'ghOzt055Basic' 18 2)
-        bot('ghozt' 'ghOzt055Basic' 18 2)
-        bot('ghozt' 'ghOzt055Basic' 18 2)
-        bot('ghozt' 'ghOzt055Basic' 18 2)
-        bot('pacmoz' 'pacmOz055Basic' 1 1)
-        bot('pacmoz' 'pacmOz055Basic' 1 1)
-        bot('pacmoz' 'pacmOz055Basic' 1 3)
-        bot('pacmoz' 'pacmOz055Basic' 1 2)
-        bot('pacmoz' 'pacmOz055Basic' 1 1)
-        bot('pacmoz' 'pacmOz055Basic' 1 1)
+       % bot('ghozt' 'ghOzt055Basic' 18 2)
+        bot('ghozt' 'ghOzt055Advanced' 18 2)
+        % bot('ghozt' 'ghOzt055Basic' 18 2)
+        % bot('ghozt' 'ghOzt055Basic' 18 2)
+        % bot('pacmoz' 'pacmOz055Basic' 1 1)
         bot('pacmoz' 'pacmOz055Basic' 1 1)
         bot('pacmoz' 'pacmOz055Basic' 1 3)
-        bot('pacmoz' 'pacmOz055Basic' 1 2)
-        bot('pacmoz' 'pacmOz055Basic' 1 1)
-        bot('ghozt' 'ghOzt055Basic' 26 27)
-        bot('pacmoz' 'pacmOz055Basic' 1 1)
-        bot('ghozt' 'ghOzt055Basic' 26 27)
-        bot('pacmoz' 'pacmOz055Basic' 1 1)
-          bot('ghozt' 'ghOzt055Basic' 26 27)
-    ]
+    %     bot('pacmoz' 'pacmOz055Basic' 1 2)
+    %     bot('pacmoz' 'pacmOz055Basic' 1 1)
+    %     bot('pacmoz' 'pacmOz055Basic' 1 1)
+    %     bot('pacmoz' 'pacmOz055Basic' 1 1)
+    %     bot('pacmoz' 'pacmOz055Basic' 1 3)
+    %     bot('pacmoz' 'pacmOz055Basic' 1 2)
+    %     bot('pacmoz' 'pacmOz055Basic' 1 1)
+    %     bot('ghozt' 'ghOzt055Basic' 26 27)
+    %     bot('pacmoz' 'pacmOz055Basic' 1 1)
+    %     bot('ghozt' 'ghOzt055Basic' 26 27)
+    %     bot('pacmoz' 'pacmOz055Basic' 1 1)
+        bot('ghozt' 'ghOzt055Advanced' 26 27)
+        ]
 
 
     % Map = [
@@ -58,12 +58,13 @@ define
     %     1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 2 2 1
     %     1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
     % ]
+
     Map = [
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        1 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1
+        1 0 0 0 2 0 0 1 1 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1
+        1 2 1 1 1 1 0 1 1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 1 1 1 0 1
         1 0 1 1 1 1 0 1 1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 1 1 1 0 1
-        1 0 1 1 1 1 0 1 1 0 1 1 1 1 1 1 1 1 0 1 1 0 1 1 1 1 0 1
-        1 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1
+        1 2 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1
         1 0 1 1 1 1 1 1 1 0 1 1 0 1 1 0 1 1 0 1 1 1 1 1 1 1 0 1
         1 0 1 1 1 1 1 1 1 0 1 1 0 1 1 0 1 1 0 1 1 1 1 1 1 1 0 1
         1 0 1 1 2 0 0 0 0 0 1 1 0 0 0 0 1 1 0 0 0 0 0 2 1 1 0 1
@@ -89,36 +90,6 @@ define
         1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
     ]
-
-    % T=[ [0 0 0 0 0 0 0 0]
-    %     [0 1 1 1 1 1 1 0]
-    %     [0 1 1 1 1 1 1 0]
-    %     [0 0 0 1 1 0 0 0]  
-    %     [9 9 0 1 1 0 9 9]
-    %     [9 9 0 1 1 0 9 9]
-    %     [9 9 0 0 0 0 9 9]
-    %   ]
-
-    % I=[ [ 0 0 0 0]
-    %     [ 0 1 1 0]
-    %     [ 0 1 1 0]
-    %     [ 0 1 1 0]
-    %     [ 0 1 1 0]
-    %     [ 0 0 0 0]
-    % ]
-    % P=[ [0 1 0]
-    %     [1 1 1]
-    %     [0 0 0]
-    %   ]
-
-    % L=[ [0 0 0 0 0 0 0 0 0]
-    %     [0 1 1 1 1 1 1 1 0]
-    %     [0 1 1 1 1 1 1 1 0]
-    %     [0 1 1 0 0 0 0 0 0]  
-    %     [0 1 1 0 9 9 9 9 9]
-    %     [0 1 1 0 9 9 9 9 9]
-    %     [0 0 0 0 9 9 9 9 9]
-    % ]
 
     % BONUS TODO: MAZE GENERATOR -> 28x29 tiles
     fun {MazeGenerator} Map end

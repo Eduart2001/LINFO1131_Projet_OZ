@@ -67,48 +67,53 @@ define
             if Dir==south then X=0 Y=1 end 
             if Dir==east then X=1 Y=0 end
             if Dir==west then X=~1 Y=0 end 
-
-            % verifies if a pacgum is in the pacmoz pos to eliminate it 
-            if CurrentAgent.type == 'pacmoz' then 
-                
-                HasItem = CurrentAgent.x+ CurrentAgent.y*28 % calculates the pacmoz pos 
-                
-                
-
-                if {HasFeature ItemsRecord HasItem}then T in %checks if at the pacmoz pos is also a items
+            
+            if Dir == nil then 
+                {Send CurrentAgent.port invalidAction('Bot '#CurrentAgent.id#' can not move')}
+                {GameController State}
+            else  
+                % verifies if a pacgum is in the pacmoz pos to eliminate it 
+                if CurrentAgent.type == 'pacmoz' then 
                     
-                    case ItemsRecord.HasItem of gum(alive:_) then % checks with the pattern match if at HasItem matches gum(alive:_)
-                        
-                        T={Record.subtract ItemsRecord HasItem} % removes the HasItem from the record and returns the new record
-                        
-                        UpdatedState={AdjoinAt{AdjoinAt State items {AdjoinAt T ngum  T.ngum-1} } score State.score+100} %updates the state record by adding the new updated items record and also changes the score by adding 100
-                        
-                        {UpdatedState.gui dispawnPacgum(CurrentAgent.x CurrentAgent.y)} % dispawns the pacgum
+                    HasItem = CurrentAgent.x+ CurrentAgent.y*28 % calculates the pacmoz pos 
+                    
+                    
 
-                        {UpdatedState.gui updateScore(UpdatedState.score)} % updates the score
+                    if {HasFeature ItemsRecord HasItem}then T in %checks if at the pacmoz pos is also a items
+                        
+                        case ItemsRecord.HasItem of gum(alive:_) then % checks with the pattern match if at HasItem matches gum(alive:_)
+                            
+                            T={Record.subtract ItemsRecord HasItem} % removes the HasItem from the record and returns the new record
+                            
+                            UpdatedState={AdjoinAt{AdjoinAt State items {AdjoinAt T ngum  T.ngum-1} } score State.score+100} %updates the state record by adding the new updated items record and also changes the score by adding 100
+                            
+                            {UpdatedState.gui dispawnPacgum(CurrentAgent.x CurrentAgent.y)} % dispawns the pacgum
 
-                        if UpdatedState.items.ngum ==0 then 
-                            {System.show 'The PacmOz team won by eliminating the GhOzt team \n The game score is ' # UpdatedState.score}
-                            {Delay 2000}
-                            {Application.exit 0}
+                            {UpdatedState.gui updateScore(UpdatedState.score)} % updates the score
+
+                            if UpdatedState.items.ngum ==0 then 
+                                {System.show 'The PacmOz team won by collecting all the pacgums. The game score is ' # UpdatedState.score}
+                                {Delay 2000}
+                                {Application.exit 0}
+                            end
+                        [] pow(alive:_) then   % checks with the pattern match if at HasItem matches gum(alive:_)
+                            
+                            T={Record.subtract ItemsRecord HasItem}
+                            UpdatedState= {AdjoinAt {AdjoinAt State items T} pow 1|State.pow}
+                            {UpdatedState.gui dispawnPacpow(CurrentAgent.x CurrentAgent.y)}
                         end
-                    [] pow(alive:_) then   % checks with the pattern match if at HasItem matches gum(alive:_)
-                       
-                        T={Record.subtract ItemsRecord HasItem}
-                        UpdatedState= {AdjoinAt {AdjoinAt State items T} pow 1|State.pow}
-                        {UpdatedState.gui dispawnPacpow(CurrentAgent.x CurrentAgent.y)}
-                    end
-                end 
+                    end 
 
-            end 
-            if {IsDet UpdatedState} then % if the UpdateState is bounded  adjoint the tracker to the new UpdatedState at the trcker pos
-                R={List.toRecord agentState {List.mapInd {AgentStateModification {Record.toList UpdatedState.tracker} Id ModPos} fun {$ I A} I#A end}}%Transforms the agents state to List then modifies it and makes it a record again
-                {UpdatedState.gui moveBot(Id Dir)}
-                {GameController {AdjoinAt UpdatedState tracker R}}
-            else 
-                R={List.toRecord agentState {List.mapInd {AgentStateModification {Record.toList State.tracker} Id ModPos} fun {$ I A} I#A end}}%Transforms the agents state to List then modifies it and makes it a record again
-                {State.gui moveBot(Id Dir)}
-                {GameController {AdjoinAt State tracker R}}
+                end 
+                if {IsDet UpdatedState} then % if the UpdateState is bounded  adjoint the tracker to the new UpdatedState at the trcker pos
+                    R={List.toRecord agentState {List.mapInd {AgentStateModification {Record.toList UpdatedState.tracker} Id ModPos} fun {$ I A} I#A end}}%Transforms the agents state to List then modifies it and makes it a record again
+                    {UpdatedState.gui moveBot(Id Dir)}
+                    {GameController {AdjoinAt UpdatedState tracker R}}
+                else 
+                    R={List.toRecord agentState {List.mapInd {AgentStateModification {Record.toList State.tracker} Id ModPos} fun {$ I A} I#A end}}%Transforms the agents state to List then modifies it and makes it a record again
+                    {State.gui moveBot(Id Dir)}
+                    {GameController {AdjoinAt State tracker R}}
+                end
             end
         end
 
@@ -142,7 +147,7 @@ define
                     UpdatedState={AdjoinAt State tracker {AdjoinAt State.tracker PacmOzId R}}
                    
                     if {CheckIfTeamEliminated UpdatedState.tracker  PacmOz.type} then 
-                        {System.show 'The GhOzt team won by eliminating the PacmOz team \n The game score is ' # UpdatedState.score}
+                        {System.show 'The GhOzt team won by eliminating the PacmOz team. The game score is ' # UpdatedState.score}
                         {Delay 2000}
                         {Application.exit 0}
                     end 
@@ -178,7 +183,7 @@ define
                 {UpdatedState.gui updateScore(UpdatedState.score)}
 
                 if {CheckIfTeamEliminated UpdatedState.tracker  GhOzt.type} then 
-                    {System.show 'The PacmOz team won by eliminating the GhOzt team \n The game score is ' # UpdatedState.score}
+                    {System.show 'The PacmOz team won by eliminating the GhOzt team. The game score is ' # UpdatedState.score}
                     {Delay 2000}
                     {Application.exit 0}
                 end 
@@ -252,6 +257,11 @@ define
             {BroadcastTeam State.tracker Type tellTeam(Id Record)}
             {GameController State}
         end
+
+        fun {InvalidAction Msg} 
+            {Broadcast State.tracker Msg}
+            {GameController State}
+        end 
     in
         % TODO: complete the interface and discard and report unknown messages
         % every function is a field in the interface() record
@@ -268,7 +278,7 @@ define
                 'pacpowDispawned':PacpowDispawned
                 'pacpowDown':PacpowDown
                 'tellTeam':TellTeam
-
+                'invalidAction':InvalidAction
                 %TODO: add other messages here
                 %...
             )
@@ -277,8 +287,7 @@ define
                 %{System.show 'interface:'#Interface#' Dispatch:'#Dispatch#'Msg:'#Msg}
                 {Interface.Dispatch Msg}
             else
-                {System.show log('Unhandle message' Dispatch)}
-                {GameController State}
+                {InvalidAction Msg}
             end
         end
     end

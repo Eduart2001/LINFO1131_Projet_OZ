@@ -6,6 +6,7 @@ import
     PacmOz000Basic
     GhOzt055Basic
     PacmOz055Basic
+    GhOzt055Advanced
 export
     'spawnBot': SpawnBot
 define
@@ -18,6 +19,7 @@ define
         []  'pacmOz000Basic' then {PacmOz000Basic.getPort Init}
         []  'ghOzt055Basic' then {GhOzt055Basic.getPort Init}
         []  'pacmOz055Basic' then {PacmOz055Basic.getPort Init}
+        []  'ghOzt055Advanced' then {GhOzt055Advanced.getPort Init}
         else
             {System.show 'Unknown BotName'}
             false

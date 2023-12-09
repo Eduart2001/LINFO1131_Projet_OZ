@@ -70,36 +70,37 @@ define
             %{System.show UpdatedState.agents}
             %Msg = movedTo(1#<id> 2#<type> 3#<x> 4#<y>)
             if State.id==CurrentAgent.id  then
-                Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
-                {Wait Samebox}
-                UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
-                {Wait UpdatedRecord}
+
                 
                 L ={PossibleDirList [state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y+1 State north} move:south) state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y-1 State south} move:north) state(valid:{IsValidMove CurrentAgent.x-1 CurrentAgent.y State east} move:west) state(valid:{IsValidMove CurrentAgent.x+1 CurrentAgent.y State west} move:east)]  nil}
-                if L == nil then 
-                    {Agent {AdjoinAt UpdatedState agents UpdatedRecord}}
+                if L == nil then
+                    {Send UpdatedState.gcport moveTo(UpdatedState.id none)}
+                    {Agent UpdatedState}
                 else 
                     
                     RandInt = {GetRandInt {List.length L}}+1  %so we will have a [1;{Length L}]
-            
                     Dir={List.nth L RandInt}
                     {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
+                    Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
+                    {Wait Samebox}
+                    UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
+                    {Wait UpdatedRecord}
                     {Agent {AdjoinAt {AdjoinAt UpdatedState agents UpdatedRecord} prevMove Dir}}
                 end
- 
+
+
             else 
                 {Agent UpdatedState}
 
             end
         end
 
-        %adding the messages to handle 
         fun {GotHaunted Msg} 
-            {Agent State}
+            {Agent {AdjoinAt State agents {Record.subtract State.agents Msg.1}}}
         end
     
         fun {GotIncensed Msg}
-            {Agent State} 
+            {Agent {AdjoinAt State agents {Record.subtract State.agents Msg.1}}}
         end
     
         fun {PacGumSpawned Msg}
@@ -123,14 +124,12 @@ define
             {System.show Msg}
             {Agent State}
         end
-        fun {Shutdown Msg}
-
-            {Agent State}
-        end
         fun {InvalidAction Msg}
+            {System.show 'The action you tried to perform is invalid : '#Msg}
             {Agent State}
         end 
         fun {PacpowDispawned pacpowDispawned(X Y)}
+            {System.show State.id}
             {Agent {AdjoinAt State pow 1|State.pow}}
         end
     in
@@ -149,7 +148,6 @@ define
                 'pacpowDown': PacPowDown
                 'tellTeam': TellTeam
                 'haunt': Haunt
-                'shutdown': Shutdown
                 'invalidAction': InvalidAction
             )
         in
