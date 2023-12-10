@@ -69,16 +69,16 @@ define
                 end 
             end
 
-            fun {SameBox Tracker Agent Agents}  
-
-                case Tracker of nil then Agents    
+            fun {SameBox Tracker Agent Agents}
+                    
+                case Tracker of nil then Agents 
                 [] H|T then
                     if {And H.type \= Agent.type  H.id \= Agent.id} andthen {And Agent.x==H.x Agent.y==H.y} then
-                        case State.pow of nil then 
-                            {Send UpdatedState.gcport haunt(Agent.id H.id)}
+                        case State.pow of nil then
+                            {Send UpdatedState.gcport haunt(H.id Agent.id)}
                             {SameBox T Agent Agent.id|Agents}
                         else 
-                            {Send UpdatedState.gcport incense(H.id Agent.id)}
+                            {Send UpdatedState.gcport incense(Agent.id H.id)}
                             {SameBox T Agent H.id|Agents}
                         end 
                     else 
@@ -151,17 +151,22 @@ define
                 else
                     %{Send State.gcport tellTeam(CurrentAgent.id)}
                     Closest={FindClosestPow CurrentAgent {Record.toList UpdatedState.powerPos} closest(id:0 dist:9999.0)}.id
-
-                    if Closest \= 0 then
+                    if  Closest \= 0 then
                         Dir={MoveTowardsTheTarget CurrentAgent.x CurrentAgent.y UpdatedState.powerPos.Closest.x  UpdatedState.powerPos.Closest.y UpdatedState}
                         {Wait Dir}
                         {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
+                    else
+                        L ={PossibleDirList [state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y+1 State north} move:south) state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y-1 State south} move:north) state(valid:{IsValidMove CurrentAgent.x-1 CurrentAgent.y State east} move:west) state(valid:{IsValidMove CurrentAgent.x+1 CurrentAgent.y State west} move:east)]  nil}
+                        RandInt = {GetRandInt {List.length L}}+1  %so we will have a [1;{Length L}]
+                        Dir={List.nth L RandInt}
+                        {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
                     end
+
                     Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
                     {Wait Samebox}
                     UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
                     {Wait UpdatedRecord}
-                    {Agent {AdjoinAt {AdjoinAt UpdatedState 'prevMove' Dir} agents UpdatedRecord}}
+                    {Agent {AdjoinAt {AdjoinAt UpdatedState prevMove Dir} agents UpdatedRecord}}
                 end
            
             else   
@@ -192,6 +197,7 @@ define
             {Agent {AdjoinAt State powerPos {Adjoin State.powerPos powerPos(R:pos(id:R x:Msg.1 y:Msg.2))}}}
         end 
         fun {PacPowDown Msg}
+            {System.show Msg}
             {Agent {AdjoinAt State pow nil}}
         end
         fun {TellTeam Msg}

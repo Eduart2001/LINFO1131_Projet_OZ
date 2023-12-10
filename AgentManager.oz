@@ -4,9 +4,10 @@ import
     System
     GhOzt000Basic
     PacmOz000Basic
-    GhOzt055Advanced
-    PacmOz055Advanced
+    GhOzt055Advanced at './extension/GhOzt055Advanced.ozf'
+    PacmOz055Advanced at './extension/PacmOz055Advanced.ozf'
     PacmOz055Basic
+    GhOzt055Basic
 
 export
     'spawnBot': SpawnBot

@@ -7,8 +7,6 @@ export
     'getPort': SpawnAgent
 define
 
-    % Feel free to modify it as much as you want to build your own agents :) !
-
     % Helper => returns an integer between [0, N[
     fun {GetRandInt N} {OS.rand} mod N end
     fun {IsValidMove X Y State InvMove} %invMove because a ghost can not do a 180° turn
@@ -21,7 +19,6 @@ define
         else if {List.nth Maze PosMaze} \=1 then true else false  end end
     end
 
-    % TODO: Complete this concurrent functional agent (PacmOz/GhOzt)
     fun {Agent State}
         fun {MovedTo Msg}
             RandInt
@@ -67,8 +64,7 @@ define
             Samebox
             UpdatedRecord 
         in
-            %{System.show UpdatedState.agents}
-            %Msg = movedTo(1#<id> 2#<type> 3#<x> 4#<y>)
+
             if State.id==CurrentAgent.id  then
 
                 
@@ -121,7 +117,6 @@ define
             {Agent State}
         end
         fun {Haunt Msg}
-            {System.show Msg}
             {Agent State}
         end
         fun {InvalidAction Msg}
@@ -129,11 +124,10 @@ define
             {Agent State}
         end 
         fun {PacpowDispawned pacpowDispawned(X Y)}
-            {System.show State.id}
             {Agent {AdjoinAt State pow 1|State.pow}}
         end
     in
-        % TODO: complete the interface and discard and report unknown messages
+        %complete the interface and discard and report unknown messages
         %adding messages Pdf 4.4
         fun {$ Msg}
             Dispatch = {Label Msg}

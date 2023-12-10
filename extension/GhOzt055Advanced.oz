@@ -153,7 +153,15 @@ define
                         {Wait Dir}
 
                         {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
+                    else
+
+                        L ={PossibleDirList [state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y+1 State north} move:south) state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y-1 State south} move:north) state(valid:{IsValidMove CurrentAgent.x-1 CurrentAgent.y State east} move:west) state(valid:{IsValidMove CurrentAgent.x+1 CurrentAgent.y State west} move:east)]  nil}
+                        RandInt = {GetRandInt {List.length L}}+1  %so we will have a [1;{Length L}]
+                        Dir={List.nth L RandInt}
+                        {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
+
                     end
+
                     Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
                     {Wait Samebox}
                     UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}

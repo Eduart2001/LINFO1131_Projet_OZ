@@ -13,17 +13,23 @@ else
 endif
 
 
-AGENT1 = "PacmOz055Advanced.oz"
-AGENT2 = "GhOzt055Advanced.oz"
+AGENT1="PacmOz055Basic.oz"
+AGENT2="GhOzt055Basic.oz"
+AGENT3 = "./extension/PacmOz055Advanced.oz"
+AGENT4 = "./extension/GhOzt055Advanced.oz"
+
 all:
 	$(OZC) -c Input.oz -o "Input.ozf"
 	$(OZC) -c AgentManager.oz
-	$(OZC) -c ${AGENT2} -o "GhOzt055Advanced.ozf"
-	$(OZC) -c ${AGENT1} -o "PacmOz055Advanced.ozf"
+	$(OZC) -c ${AGENT3} -o "./extension/PacmOz055Advanced.ozf"
+	$(OZC) -c ${AGENT4} -o "./extension/GhOzt055Advanced.ozf"
 	$(OZC) -c Graphics.oz
 	$(OZC) -c Main.oz
 	$(OZENGINE) Main.ozf
 run:
-	
+
+
 clean:
 	rm *.ozf
+
+	rm ./extension/*.ozf

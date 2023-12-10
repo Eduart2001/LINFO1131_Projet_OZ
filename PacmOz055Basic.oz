@@ -6,8 +6,7 @@ import
 export
     'getPort': SpawnAgent
 define
-    Dead %this variable is bound when a message is receved 
-    % Feel free to modify it as much as you want to build your own agents :) !
+
 
     % Helper => returns an integer between [0, N]
     fun {GetRandInt N} {OS.rand} mod N end
@@ -24,7 +23,6 @@ define
 
 
     
-    % TODO: Complete this concurrent functional agent (PacmOz/GhOzt)
     fun {Agent State}
         fun {MovedTo Msg}
             RandInt
@@ -70,8 +68,7 @@ define
             Samebox
             UpdatedRecord
         in
-            %{System.show UpdatedState.agents}
-            %Msg = movedTo(1#<id> 2#<type> 3#<x> 4#<y>)
+
             if State.id==CurrentAgent.id  then
                 
                 L ={PossibleDirList [state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y+1 State north} move:south) state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y-1 State south} move:north) state(valid:{IsValidMove CurrentAgent.x-1 CurrentAgent.y State east} move:west) state(valid:{IsValidMove CurrentAgent.x+1 CurrentAgent.y State west} move:east)]  nil}
@@ -94,7 +91,6 @@ define
             end
         end
 
-        %adding the messages to handle 
         fun {GotHaunted Msg} 
             {Agent {AdjoinAt State agents {Record.subtract State.agents Msg.1}}}
         end
@@ -131,7 +127,7 @@ define
             {Agent {AdjoinAt State pow 1|State.pow}}
         end
     in
-        % TODO: complete the interface and discard and report unknown messages
+        %complete the interface and discard and report unknown messages
         %adding messages Pdf 4.4
         fun {$ Msg}
             Dispatch = {Label Msg}

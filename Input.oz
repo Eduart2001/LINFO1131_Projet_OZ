@@ -4,14 +4,13 @@ export
     'genMaze': MazeGenerator
     'bots': Bots
 define
+
     Bots = [
-        
         bot('pacmoz' 'pacmOz055Advanced' 1 1)
         bot('pacmoz' 'pacmOz055Advanced' 1 3)
-        bot('ghozt' 'ghOzt055Advanced' 18 2)
-        %bot('ghozt' 'ghOzt055Basic' 26 27)
+        bot('ghozt' 'ghOzt055Advanced' 27 26)
+        bot('ghozt' 'ghOzt055Advanced' 26 27)
         ]
-
 
     Map = [
         1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
