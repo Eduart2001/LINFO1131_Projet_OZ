@@ -4,9 +4,10 @@ import
     System
     GhOzt000Basic
     PacmOz000Basic
-    GhOzt055Basic
-    PacmOz055Basic
     GhOzt055Advanced
+    PacmOz055Advanced
+    PacmOz055Basic
+
 export
     'spawnBot': SpawnBot
 define
@@ -17,9 +18,8 @@ define
         case BotName of
             'ghOzt000Basic' then {GhOzt000Basic.getPort Init}
         []  'pacmOz000Basic' then {PacmOz000Basic.getPort Init}
-        []  'ghOzt055Basic' then {GhOzt055Basic.getPort Init}
-        []  'pacmOz055Basic' then {PacmOz055Basic.getPort Init}
         []  'ghOzt055Advanced' then {GhOzt055Advanced.getPort Init}
+        []  'pacmOz055Advanced' then {PacmOz055Advanced.getPort Init}
         else
             {System.show 'Unknown BotName'}
             false

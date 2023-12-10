@@ -97,6 +97,7 @@ define
             in
                 case Agents of nil then Dist
                 [] H|T then K = {CalculateDistance Agent.x Agent.y H.x H.y}  
+                    
                     if {And H.type \= Agent.type K =< Dist.dist} then
                         {FindClosest Agent T closest(id:H.id dist:K)}
                     else 
@@ -112,136 +113,58 @@ define
             UpdatedRecord 
             L
         in
+            %{System.show UpdatedState.agents}
+            %Msg = movedTo(1#<id> 2#<type> 3#<x> 4#<y>)
+            if UpdatedState.id==CurrentAgent.id  then
 
-            % if State.id==CurrentAgent.id  then
+                if UpdatedState.pow \=nil then 
+                        if UpdatedState.turned \= UpdatedState.hasTurned then 
+                            case UpdatedState.prevMove of north then Dir=south 
+                            []south then Dir=north 
+                            []east then Dir=west 
+                            []west then Dir=east 
+                            end
+                            {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
+                            {Agent {AdjoinAt {AdjoinAt UpdatedState hasTurned true} prevMove Dir}}
+                        else
+                            L ={PossibleDirList [state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y+1 State north} move:south) state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y-1 State south} move:north) state(valid:{IsValidMove CurrentAgent.x-1 CurrentAgent.y State east} move:west) state(valid:{IsValidMove CurrentAgent.x+1 CurrentAgent.y State west} move:east)]  nil}
+                            if L == nil then
+                                {Send UpdatedState.gcport moveTo(UpdatedState.id none)}
+                                {Agent UpdatedState}
+                            else 
+                                
+                                RandInt = {GetRandInt {List.length L}}+1  %so we will have a [1;{Length L}]
+                                Dir={List.nth L RandInt}
+                                {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
+                                Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
+                                {Wait Samebox}
+                                UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
+                                {Wait UpdatedRecord}
+                                {Agent {AdjoinAt {AdjoinAt UpdatedState agents UpdatedRecord} prevMove Dir}}
+                            end
+                        end
 
-            %     if State.pow \= nil then 
+                else
+                    %{Send State.gcport tellTeam(CurrentAgent.id)}
+                    Closest={FindClosest CurrentAgent {Record.toList UpdatedState.agents} closest(id:0 dist:9999.0)}.id
 
-            %         % if State.turned \= State.hasTurned then
-            %         %     case State.prevMove of north then Dir=south
-            %         %         []south then Dir=north
-            %         %         []east then Dir=west
-            %         %         []west then Dir=east 
-            %         %     end
-            %         %     {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
+                    if Closest \= 0 then
+                        Dir={MoveTowardsThePacmOz CurrentAgent.x CurrentAgent.y UpdatedState.agents.Closest.x  UpdatedState.agents.Closest.y UpdatedState}
+                        {Wait Dir}
 
-            %         %         Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
-            %         %         {Wait Samebox}
-            %         %         UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
-            %         %         {Wait UpdatedRecord}
-
-            %         %     {Agent {AdjoinAt {AdjoinAt {AdjoinAt UpdatedState agents UpdatedRecord} hasTurned true} prevMove Dir}}
-            %         % else 
-            %             L ={PossibleDirList [state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y+1 State north} move:south) state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y-1 State south} move:north) state(valid:{IsValidMove CurrentAgent.x-1 CurrentAgent.y State east} move:west) state(valid:{IsValidMove CurrentAgent.x+1 CurrentAgent.y State west} move:east)]  nil}
-            %             if L == nil then 
-            %                 {Agent UpdatedState}
-            %             else
-                            
-            %                 RandInt = {GetRandInt {List.length L}}+1  %so we will have a [1;{Length L}]
-            %                 Dir={List.nth L RandInt}
-            %                 {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
-            %                 Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
-            %                 {Wait Samebox}
-            %                 UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
-            %                 {Wait UpdatedRecord}
-            %                 {Agent {AdjoinAt {AdjoinAt UpdatedState agents UpdatedRecord} prevMove Dir}}
-            %             end
-            %         %end
-            %     else 
-            %         Closest={FindClosest CurrentAgent {Record.toList State.agents} closest(id:0 dist:9999.0)}.id
-            %         if Closest \= 0 then
-            %             Dir={MoveTowardsThePacmOz CurrentAgent.x CurrentAgent.y UpdatedRecord.Closest.x  UpdatedRecord.Closest.y UpdatedState}
-            %             {Wait Dir}
-            %             {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
-            %         end
-            %         Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
-            %         {Wait Samebox}
-            %         UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
-            %         {Wait UpdatedRecord}
-            %         {Agent {AdjoinAt {AdjoinAt UpdatedState 'prevMove' Dir} agents UpdatedRecord}}
-            %     end
-            % else 
-            %     {Agent State}
-            % end 
-
-
-
-
-            if State.id==CurrentAgent.id  then
-
-                
-                L ={PossibleDirList [state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y+1 State north} move:south) state(valid:{IsValidMove CurrentAgent.x CurrentAgent.y-1 State south} move:north) state(valid:{IsValidMove CurrentAgent.x-1 CurrentAgent.y State east} move:west) state(valid:{IsValidMove CurrentAgent.x+1 CurrentAgent.y State west} move:east)]  nil}
-                if L == nil then
-                    {Send UpdatedState.gcport moveTo(UpdatedState.id none)}
-                    {Agent UpdatedState}
-                else 
-                    
-                    RandInt = {GetRandInt {List.length L}}+1  %so we will have a [1;{Length L}]
-                    Dir={List.nth L RandInt}
-                    {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
+                        {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
+                    end
                     Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
                     {Wait Samebox}
                     UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
                     {Wait UpdatedRecord}
-                    {Agent {AdjoinAt {AdjoinAt UpdatedState agents UpdatedRecord} prevMove Dir}}
+                    {Agent {AdjoinAt {AdjoinAt UpdatedState 'prevMove' Dir} agents UpdatedRecord}}
                 end
-
-
-            else 
+           
+            else   
                 {Agent UpdatedState}
 
             end
-
-
-
-
-            % %{System.show UpdatedState.agents}
-            % %Msg = movedTo(1#<id> 2#<type> 3#<x> 4#<y>)
-            % if State.id==CurrentAgent.id  then
-
-                
-            %     if UpdatedState.pow \=nil then 
-            %             if State.turned \= State.hasTurned then
-            %                 case State.prevMove of north then Dir=south
-            %                 []south then Dir=north
-            %                 []east then Dir=west
-            %                 []west then Dir=east 
-            %                 end
-            %                 {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
-            %                 {Agent {AdjoinAt {AdjoinAt UpdatedState hasTurned true} prevMove Dir}}
-            %             else
-                            
-            %                 RandInt = {GetRandInt {List.length L}}+1  %so we will have a [1;{Length L}]
-            %                 Dir={List.nth L RandInt}
-            %                 {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
-            %                 Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
-            %                 {Wait Samebox}
-            %                 UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
-            %                 {Wait UpdatedRecord}
-
-            %                 {Agent {AdjoinAt {AdjoinAt UpdatedState agents UpdatedRecord} prevMove Dir}}
-            %             end
-
-            %     else
-            %         %{Send State.gcport tellTeam(CurrentAgent.id)}
-            %         Closest={FindClosest CurrentAgent {Record.toList State.agents} closest(id:0 dist:9999.0)}.id
-            %         {System.show Closest}
-            %         if Closest \= 0 then
-            %             Dir={MoveTowardsThePacmOz CurrentAgent.x CurrentAgent.y UpdatedRecord.Closest.x  UpdatedRecord.Closest.y UpdatedState}
-            %             {Wait Dir}
-            %             {Send UpdatedState.gcport moveTo(UpdatedState.id Dir)}
-            %         end
-            %         Samebox={SameBox {Record.toList UpdatedState.agents}  CurrentAgent nil}
-            %         {Wait Samebox}
-            %         UpdatedRecord={RemoveFromRecord Samebox UpdatedState.agents}
-            %         {Wait UpdatedRecord}
-            %         {Agent {AdjoinAt {AdjoinAt UpdatedState 'prevMove' Dir} agents UpdatedRecord}}
-            %     end
-           
-            % else   
-            %     {Agent UpdatedState}
-
-            % end
         end
     
         fun {GotHaunted Msg} 
@@ -270,14 +193,13 @@ define
             {Agent State}
         end
         fun {Haunt Msg}
-            {System.show Msg}
             {Agent State}
         end
         fun {InvalidAction Msg}
             {System.show 'The action you tried to perform is invalid : '#Msg}
             {Agent State}
         end 
-        fun {PacpowDispawned pacpowDispawned(X Y)}
+        fun {PacpowDispawned Msg}
             {Agent {AdjoinAt {AdjoinAt State turned true} pow 1|State.pow}}
         end
     in

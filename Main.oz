@@ -8,13 +8,11 @@ import
     Application
     OS
 define
-     % Check the Adjoin and AdjoinAt function, documentation: (http://mozart2.org/mozart-v1/doc-1.4.0/base/record.html#section.records.records)
-    %liste des joueurs 
+
     proc {Broadcast Tracker Msg}
         {Record.forAll Tracker proc {$ Tracked} if Tracked.alive then {Send Tracked.port Msg} end end}
     end
-    % TODO: define here any auxiliary functions or procedures you may need
-    %...
+
     
 
     %Function to modify agents states based on a function
@@ -30,7 +28,7 @@ define
         end
     end
 
-
+    %function to check if all the bots from the same team are eliminated
     fun {CheckIfTeamEliminated Tracker Type}
         Bool
     in
@@ -68,7 +66,7 @@ define
             if Dir==east then X=1 Y=0 end
             if Dir==west then X=~1 Y=0 end 
             
-            if Dir == nil then 
+            if Dir == none then 
                 {Send CurrentAgent.port invalidAction('Bot '#CurrentAgent.id#' can not move')}
                 {GameController State}
             else  
@@ -123,7 +121,8 @@ define
             {Broadcast State.tracker movedTo(ID TYPE X Y)}
             {GameController State}
         end
-
+        % function to handle the haunt message
+        % if all the bots from same team are eliminated the game is finished and the screen shutsdown after 2 sec
         fun {Haunt haunt(GhOztId PacmOzId)}
             PacmOz= State.tracker.PacmOzId
 
@@ -160,7 +159,8 @@ define
                 {GameController State}
             end
         end
-
+        % function to handle the incense message
+        % if all the bots from same team are eliminated the game is finished and the screen shutsdown after 2 sec
         fun {Incense incense(PacmOzId GhOztId)}
             GhOzt= State.tracker.GhOztId
             UpdatedState
@@ -176,7 +176,7 @@ define
                 port: GhOzt.port
                 ) 
             in 
-                {Broadcast State.tracker gotIncensed(GhOztId)}
+                {Broadcast State.tracker gotIncensed(GhOztId)} 
                 {State.gui dispawnBot(GhOztId)}
                 {Send GhOzt.port shutdown()}
                 UpdatedState= {AdjoinAt {AdjoinAt State tracker {AdjoinAt State.tracker GhOztId R}} score State.score+500}
@@ -184,7 +184,7 @@ define
 
                 if {CheckIfTeamEliminated UpdatedState.tracker  GhOzt.type} then 
                     {System.show 'The PacmOz team won by eliminating the GhOzt team. The game score is ' # UpdatedState.score}
-                    {Delay 2000}
+                    {Delay 2000} 
                     {Application.exit 0}
                 end 
             end
@@ -206,18 +206,16 @@ define
                 NewItems = items(Index: gum('alive': true) 'ngum': 1)
             end
         in
-            %state.tracker liste des jouerus
             {Broadcast State.tracker pacgumSpawned(X Y)}
             {GameController {AdjoinAt State 'items' NewItems}}
         end
-
+        % function to handle the pacgumDispawned message
         fun {PacgumDispawned pacgumDispawned(X Y)}
-            %{System.show 'pacgumDispawned(X Y)'}
             {Broadcast State.tracker pacgumDispawned(X Y)}
 
             {GameController State}
         end
-       
+       % function to handle the pacpowSpawned message
         fun {PacpowSpawned pacpowSpawned(X Y)}
 
             Index = Y * 28 + X
@@ -231,12 +229,12 @@ define
             {Broadcast State.tracker pacpowSpawned(X Y)}
             {GameController {AdjoinAt State 'items' NewItems}}
         end
-
+        % function to handle the pacpowDispawned message
         fun {PacpowDispawned pacpowDispawned(X Y)}
             {Broadcast State.tracker pacpowDispawned(X Y)}
             {GameController State}
         end
-
+        % function to handle the pacpowDown message
         fun {PacpowDown pacpowDown()}
             case State.pow of H|T andthen T==nil then
                 {State.gui setAllScared(false)}
@@ -246,7 +244,7 @@ define
                 {GameController {AdjoinAt State pow T}}
             end
         end
-
+        % function to handle the tellTeam message
         fun {TellTeam tellTeam(Id Record)}
             proc {BroadcastTeam Tracker Type Msg}
                 {Record.forAll Tracker proc {$ Tracked} if {And Tracked.id \= Id {And Tracked.alive  Tracked.type == Type}}then {Send Tracked.port Msg} end end}
@@ -257,14 +255,12 @@ define
             {BroadcastTeam State.tracker Type tellTeam(Id Record)}
             {GameController State}
         end
-
+        % function to handle the InvalidAction message
         fun {InvalidAction Msg} 
             {Broadcast State.tracker Msg}
             {GameController State}
         end 
     in
-        % TODO: complete the interface and discard and report unknown messages
-        % every function is a field in the interface() record
         fun {$ Msg}
             Dispatch = {Label Msg}
             Interface = interface(
@@ -279,12 +275,9 @@ define
                 'pacpowDown':PacpowDown
                 'tellTeam':TellTeam
                 'invalidAction':InvalidAction
-                %TODO: add other messages here
-                %...
             )
         in
             if {HasFeature Interface Dispatch} then
-                %{System.show 'interface:'#Interface#' Dispatch:'#Dispatch#'Msg:'#Msg}
                 {Interface.Dispatch Msg}
             else
                 {InvalidAction Msg}
@@ -318,8 +311,7 @@ define
         of nil then nil
         [] Agent|T then
                 agentState(
-                    alive: true % ?
-                    % TODO: add fields
+                    alive: true 
                     id:Agent.id
                     x:Agent.x 
                     y:Agent.y
@@ -329,7 +321,7 @@ define
 		end
 	end
 
-    % TODO: Spawn the agents
+
     proc {StartGame}
         Stream
         Port = {NewPort Stream}
@@ -354,7 +346,6 @@ define
         )}
         
     in
-        % TODO: log the winning team name and the score then use {Application.exit 0}
         {Handler Stream Instance}
     end
 
