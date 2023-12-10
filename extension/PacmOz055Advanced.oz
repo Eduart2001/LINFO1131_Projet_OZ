@@ -197,7 +197,6 @@ define
             {Agent {AdjoinAt State powerPos {Adjoin State.powerPos powerPos(R:pos(id:R x:Msg.1 y:Msg.2))}}}
         end 
         fun {PacPowDown Msg}
-            {System.show Msg}
             {Agent {AdjoinAt State pow nil}}
         end
         fun {TellTeam Msg}

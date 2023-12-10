@@ -44,7 +44,7 @@ define
 
         % function to handle the moveTo message
         fun {MoveTo moveTo(Id Dir)}
-            X Y R HasItem CurrentAgent 
+            X Y R HasItem CurrentAgent  
 
             fun {ModPos AgentState}
                 agentState(id:Id x:Ax y:Ay type:TYPE port:PORT alive:ALIVE) = AgentState
@@ -86,7 +86,6 @@ define
                             UpdatedState={AdjoinAt{AdjoinAt State items {AdjoinAt T ngum  T.ngum-1} } score State.score+100} %updates the state record by adding the new updated items record and also changes the score by adding 100
                             
                             {UpdatedState.gui dispawnPacgum(CurrentAgent.x CurrentAgent.y)} % dispawns the pacgum
-
                             {UpdatedState.gui updateScore(UpdatedState.score)} % updates the score
 
                             if UpdatedState.items.ngum ==0 then 
@@ -212,7 +211,6 @@ define
         % function to handle the pacgumDispawned message
         fun {PacgumDispawned pacgumDispawned(X Y)}
             {Broadcast State.tracker pacgumDispawned(X Y)}
-
             {GameController State}
         end
        % function to handle the pacpowSpawned message
@@ -331,12 +329,11 @@ define
         {GUI buildMaze(Maze)}
 
     
-
         % init the agents (returns a list the agents' ports)
         Agents = {DoListBot Input.bots Port Maze GUI}
         % init the state record for all agents
         AgentsState = {List.toRecord agentState {List.mapInd {InitAgents Agents} fun {$ I A} I#A end}}
-
+        
         Instance = {GameController state(
             'gui': GUI
             'maze': Maze

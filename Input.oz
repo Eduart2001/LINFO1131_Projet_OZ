@@ -7,8 +7,8 @@ define
 
     Bots = [
         bot('pacmoz' 'pacmOz055Advanced' 1 1)
-        bot('pacmoz' 'pacmOz055Advanced' 1 3)
-        bot('ghozt' 'ghOzt055Advanced' 27 26)
+        bot('pacmoz' 'pacmOz055Advanced' 26 1)
+        bot('ghozt' 'ghOzt055Advanced' 26 26)
         bot('ghozt' 'ghOzt055Advanced' 26 27)
         ]
 

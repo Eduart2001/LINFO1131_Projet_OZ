@@ -23,12 +23,11 @@ all:
 	$(OZC) -c AgentManager.oz
 	$(OZC) -c ${AGENT3} -o "./extension/PacmOz055Advanced.ozf"
 	$(OZC) -c ${AGENT4} -o "./extension/GhOzt055Advanced.ozf"
+	$(OZC) -c "./extension/GraphStyles.oz" -o "./extension/GraphStyles.ozf"
 	$(OZC) -c Graphics.oz
 	$(OZC) -c Main.oz
-	$(OZENGINE) Main.ozf
 run:
-
-
+	$(OZENGINE) Main.ozf
 clean:
 	rm *.ozf
 
